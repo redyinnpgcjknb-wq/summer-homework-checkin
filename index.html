@@ -13,15 +13,18 @@
     .dateCard{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:46px 1fr 46px;gap:10px;align-items:center;margin:16px 0;padding:10px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px)}.dateCard button{height:44px;border:0;border-radius:8px;background:#eef2f7;color:var(--ink);font-size:30px;line-height:1}.dateCard div{text-align:center}.dateCard span{display:block;color:var(--muted);font-size:12px;font-weight:800}.dateCard strong{display:block;margin-top:2px;font-size:18px}
     .card{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:16px;box-shadow:0 8px 26px rgba(23,32,51,.05)}.sectionTitle{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.todayScore{text-align:right}.todayScore strong{display:block;color:var(--green);font-size:24px}.todayScore span{color:var(--muted);font-size:12px;font-weight:800}.taskList{display:grid;gap:10px}
     .taskItem{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;border:1px solid #e5e9f0;border-radius:8px;background:#fff;padding:12px}.taskItem.done{border-color:#86efac;background:#f0fdf4}.taskItem button{width:34px;height:34px;border:2px solid var(--green);border-radius:50%;background:#fff;color:#fff;font-weight:900}.taskItem.done button{background:var(--green)}.taskItem strong{display:block;font-size:17px;line-height:1.25}.taskItem p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.45}.taskItem span{color:var(--gold);font-weight:900;white-space:nowrap}.smallPill{padding:8px 12px;color:var(--gold);font-size:13px}
-    .spendForm{display:grid;grid-template-columns:128px 1fr;gap:10px}.spendForm label{display:grid;gap:6px;color:var(--muted);font-size:13px;font-weight:800}.spendForm input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;background:#f8fafc;color:var(--ink);padding:0 12px}.spendForm button{grid-column:1/3;min-height:46px;border:0;border-radius:8px;background:var(--ink);color:#fff;font-weight:900}.spendList{display:grid;gap:8px;margin-top:12px}.spendList div{display:grid;grid-template-columns:82px 58px 1fr 44px;gap:8px;align-items:center;color:var(--muted);font-size:12px}.spendList strong{color:#dc2626}.spendList em{color:var(--ink);font-style:normal;font-weight:800}.spendList button{min-height:32px;border:0;border-radius:8px;background:#fee2e2;color:#b91c1c;font-size:12px}.spendList p{margin:0;color:var(--muted);font-size:14px}
+    .spendForm{display:grid;grid-template-columns:128px 1fr;gap:10px}.spendForm label,.syncForm label{display:grid;gap:6px;color:var(--muted);font-size:13px;font-weight:800}.spendForm input,.syncForm input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;background:#f8fafc;color:var(--ink);padding:0 12px}.spendForm button{grid-column:1/3;min-height:46px;border:0;border-radius:8px;background:var(--ink);color:#fff;font-weight:900}.spendList{display:grid;gap:8px;margin-top:12px}.spendList div{display:grid;grid-template-columns:82px 58px 1fr 44px;gap:8px;align-items:center;color:var(--muted);font-size:12px}.spendList strong{color:#dc2626}.spendList em{color:var(--ink);font-style:normal;font-weight:800}.spendList button{min-height:32px;border:0;border-radius:8px;background:#fee2e2;color:#b91c1c;font-size:12px}.spendList p{margin:0;color:var(--muted);font-size:14px}.syncForm{display:grid;gap:10px}.syncButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.syncButtons button{min-height:44px;border:0;border-radius:8px;background:var(--ink);color:#fff;font-weight:900}.syncButtons button.secondary{background:#e5e7eb;color:var(--ink)}.syncText{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.5}.syncOk{color:var(--green);font-weight:900}.syncBad{color:#dc2626;font-weight:900}
     .homeworkList{display:grid;gap:10px;margin:0;padding-left:20px;color:var(--ink);line-height:1.55}.planList{display:grid;gap:8px}details{border:1px solid #e5e9f0;border-radius:8px;background:#fff;overflow:hidden}summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding:0 12px;cursor:pointer;font-weight:900;list-style:none}summary::-webkit-details-marker{display:none}summary b{color:var(--green)}details ol{margin:0;padding:0 16px 14px 36px;color:var(--muted);line-height:1.55}details li+li{margin-top:6px}.note{margin-top:14px;border-radius:8px;background:#172033;color:#fff;padding:16px}.note strong{display:block;margin-bottom:8px;font-size:18px}.note p{margin:0;color:#dbe4ef;line-height:1.6}.note p+p{margin-top:8px}
-    @media (min-width:700px){main{padding-top:28px}.accountGrid{grid-template-columns:1fr 1fr}}@media (max-width:420px){main{padding-left:12px;padding-right:12px}h1{font-size:34px}.account{grid-template-columns:40px 1fr}.balance{grid-column:2;grid-row:auto;justify-self:start}.bar,.account small{grid-column:1/3}.spendForm,.spendForm button{grid-template-columns:1fr;grid-column:auto}.spendList div{grid-template-columns:1fr auto}.spendList em,.spendList button{grid-column:span 2}}
+    @media (min-width:700px){main{padding-top:28px}.accountGrid{grid-template-columns:1fr 1fr}}@media (max-width:420px){main{padding-left:12px;padding-right:12px}h1{font-size:34px}.account{grid-template-columns:40px 1fr}.balance{grid-column:2;grid-row:auto;justify-self:start}.bar,.account small{grid-column:1/3}.spendForm,.spendForm button{grid-template-columns:1fr;grid-column:auto}.spendList div{grid-template-columns:1fr auto}.spendList em,.spendList button{grid-column:span 2}.syncButtons{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <main id="app"></main>
   <script>
     const storageKey="summer-homework-checkin-github-pages-v1";
+    const syncSettingsKey="summer-homework-checkin-sync-settings-v1";
+    const defaultSyncEndpoint="https://summer-homework-checkin-dac08172-1453180948.ap-shanghai.app.tcloudbase.com/homeworkSync";
+    const deviceIdKey="summer-homework-checkin-device-id-v1";
     const childInfo={
       grade3:{name:"三年级4班",shortName:"三年级",color:"#16a34a",bg:"#ecfdf3",maxNormal:"平日通常7星，周日学习机休息后通常6星；有读后感或综合实践推进日会多1星。"},
       grade4:{name:"四年级5班",shortName:"四年级",color:"#2563eb",bg:"#eef6ff",maxNormal:"平日通常8星，周日学习机休息且任务较轻；作文日仍按语文任务计1星。"}
@@ -73,12 +76,48 @@
     };
     const plans=rawPlans.map(([date,weekday,grade3,grade4])=>({date,weekday,grade3:grade3.map(parseTask),grade4:grade4.map(parseTask)}));
     function parseTask(text){const [title,detail]=text.split("|");return{id:title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]+/g,"-"),title,detail};}
-    function defaultState(){return{checked:{},spends:{grade3:[],grade4:[]}}}
-    function loadState(){try{return Object.assign(defaultState(),JSON.parse(localStorage.getItem(storageKey)||"{}"))}catch{return defaultState()}}
-    let state=loadState(), activeChild="grade3", dayIndex=getTodayIndex(), spendStars="0", spendNote="";
+    function defaultState(){return{checked:{},checkedUpdatedAt:{},spends:{grade3:[],grade4:[]},deletedSpendIds:{},updatedAt:0}}
+    function getDeviceId(){let id=localStorage.getItem(deviceIdKey);if(!id){id="d-"+Date.now()+"-"+Math.random().toString(36).slice(2);localStorage.setItem(deviceIdKey,id)}return id}
+    const deviceId=getDeviceId();
+    function normalizeState(input){
+      const base=defaultState(), s=Object.assign(base,input||{});
+      s.checked=s.checked||{};s.checkedUpdatedAt=s.checkedUpdatedAt||{};s.spends=s.spends||{};s.deletedSpendIds=s.deletedSpendIds||{};
+      ["grade3","grade4"].forEach(child=>{s.spends[child]=(s.spends[child]||[]).map(item=>Object.assign({id:String(Date.now())+"-"+Math.random().toString(36).slice(2),createdAt:s.updatedAt||Date.now()},item)).filter(item=>!s.deletedSpendIds[item.id])});
+      Object.keys(s.checked).forEach(k=>{if(!s.checkedUpdatedAt[k])s.checkedUpdatedAt[k]=s.updatedAt||Date.now()});
+      return s;
+    }
+    function loadState(){try{return normalizeState(JSON.parse(localStorage.getItem(storageKey)||"{}"))}catch{return defaultState()}}
+    function loadSyncSettings(){try{return Object.assign({endpoint:defaultSyncEndpoint,familyCode:"",enabled:false},JSON.parse(localStorage.getItem(syncSettingsKey)||"{}"))}catch{return{endpoint:defaultSyncEndpoint,familyCode:"",enabled:false}}}
+    let state=loadState(), syncSettings=loadSyncSettings(), syncStatus=syncSettings.enabled?"等待同步":"本地模式", activeChild="grade3", dayIndex=getTodayIndex(), spendStars="0", spendNote="", syncEndpoint=syncSettings.endpoint, syncFamilyCode=syncSettings.familyCode, syncTimer=null;
     function getTodayIndex(){const start=new Date("2026-07-13T00:00:00+08:00").getTime();const day=Math.floor((Date.now()-start)/86400000);return Math.min(plans.length-1,Math.max(0,day));}
     function keyOf(child,index,id){return child+":"+index+":"+id}
-    function save(){localStorage.setItem(storageKey,JSON.stringify(state))}
+    function save(options={}){state=normalizeState(state);state.updatedAt=Date.now();localStorage.setItem(storageKey,JSON.stringify(state));if(!options.skipSync)scheduleCloudSave()}
+    function saveSyncSettings(){syncSettings={endpoint:syncEndpoint.trim(),familyCode:syncFamilyCode.trim(),enabled:Boolean(syncEndpoint.trim()&&syncFamilyCode.trim())};localStorage.setItem(syncSettingsKey,JSON.stringify(syncSettings))}
+    function syncReady(){return Boolean(syncSettings.enabled&&syncSettings.endpoint&&syncSettings.familyCode)}
+    function syncUrl(){return syncSettings.endpoint.replace(/\/+$/,"")+"?family="+encodeURIComponent(syncSettings.familyCode)}
+    function publicState(){return Object.assign({},state,{deviceId,updatedAt:Date.now()})}
+    function mergeStates(local,remote){
+      const a=normalizeState(local), b=normalizeState(remote), merged=normalizeState({});
+      const checkKeys=new Set([...Object.keys(a.checked),...Object.keys(b.checked)]);
+      checkKeys.forEach(k=>{const at=a.checkedUpdatedAt[k]||0, bt=b.checkedUpdatedAt[k]||0;if(bt>at){merged.checked[k]=Boolean(b.checked[k]);merged.checkedUpdatedAt[k]=bt}else{merged.checked[k]=Boolean(a.checked[k]);merged.checkedUpdatedAt[k]=at}});
+      merged.deletedSpendIds=Object.assign({},a.deletedSpendIds,b.deletedSpendIds);
+      ["grade3","grade4"].forEach(child=>{
+        const byId={};
+        [...(a.spends[child]||[]),...(b.spends[child]||[])].forEach(item=>{const old=byId[item.id];if(!old||(item.updatedAt||item.createdAt||0)>(old.updatedAt||old.createdAt||0))byId[item.id]=item});
+        merged.spends[child]=Object.values(byId).filter(item=>!merged.deletedSpendIds[item.id]).sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));
+      });
+      merged.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0,Date.now());
+      return merged;
+    }
+    function scheduleCloudSave(){if(!syncReady())return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow("auto"),800)}
+    async function fetchCloudState(){const res=await fetch(syncUrl(),{method:"GET",cache:"no-store"});if(res.status===404)return null;if(!res.ok)throw new Error("读取云端失败 "+res.status);const data=await res.json();return data.state||data}
+    async function pushCloudState(){const res=await fetch(syncUrl(),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({family:syncSettings.familyCode,state:publicState()})});if(!res.ok)throw new Error("保存云端失败 "+res.status)}
+    async function syncNow(reason="manual"){
+      if(!syncReady()){syncStatus="请先填写同步地址和家庭口令";render();return}
+      syncStatus="同步中";render();
+      try{const remote=await fetchCloudState();state=mergeStates(state,remote||{});localStorage.setItem(storageKey,JSON.stringify(state));await pushCloudState();syncStatus="已同步 "+new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"});render()}
+      catch(err){syncStatus="同步失败："+(err&&err.message?err.message:"网络错误");if(reason!=="auto")render()}
+    }
     function allTasks(child){return plans.flatMap(p=>p[child])}
     function checkedCount(child){let count=0;plans.forEach((p,i)=>p[child].forEach(t=>{if(state.checked[keyOf(child,i,t.id)])count++}));return count}
     function stats(child){const completed=checkedCount(child),total=allTasks(child).length,spent=(state.spends[child]||[]).reduce((s,i)=>s+i.stars,0);return{earned:completed,spent,balance:completed-spent,completed,total,percent:total?Math.round(completed/total*100):0}}
@@ -89,6 +128,7 @@
       document.getElementById("app").innerHTML=`
         <header class="topbar"><div><p class="kicker">30天计划 · 7月13日-8月11日</p><h1>暑假作业打卡</h1></div><span class="badge">分开统计</span></header>
         <section class="accountGrid" aria-label="孩子账户">${accountHtml("grade3",st3)}${accountHtml("grade4",st4)}</section>
+        ${syncHtml()}
         <section class="dateCard"><button data-action="prev" aria-label="前一天">‹</button><div><span>第${dayIndex+1}天</span><strong>${plan.date} ${plan.weekday}</strong></div><button data-action="next" aria-label="后一天">›</button></section>
         <section class="card"><div class="sectionTitle"><div><p class="kicker">${info.name}</p><h2>今日打卡</h2></div><div class="todayScore"><strong>${todayDone}/${tasks.length}</strong><span>今日最多${tasks.length}★</span></div></div><div class="taskList">${tasks.map(taskHtml).join("")}</div></section>
         <section class="card spendCard"><div class="sectionTitle"><div><p class="kicker">${info.name}</p><h2>今日消费</h2></div><span class="smallPill">单独记账</span></div><div class="spendForm"><label>使用星星数<input inputmode="numeric" id="spendStars" value="${esc(spendStars)}"></label><label>使用途径<input id="spendNote" placeholder="例：20分钟动画" value="${esc(spendNote)}"></label><button data-action="addSpend">记录消费</button></div><div class="spendList">${spendHtml()}</div></section>
@@ -98,20 +138,26 @@
       bind();
     }
     function accountHtml(child,st){const i=childInfo[child];return`<button class="account ${activeChild===child?"active":""}" data-child="${child}" style="--accent:${i.color};--soft:${i.bg}"><span class="dot"></span><strong>${i.name}</strong><span class="balance">余额 ${st.balance}★</span><span>累计获得 <b>${st.earned}★</b></span><span>累计消费 <b>${st.spent}★</b></span><span>作业进度 <b>${st.percent}%</b></span><i class="bar"><em style="width:${st.percent}%"></em></i><small>${st.completed}/${st.total}项</small></button>`}
+    function syncHtml(){const ok=syncReady(), cls=syncStatus.includes("失败")?"syncBad":(ok?"syncOk":"");return`<section class="card syncCard"><div class="sectionTitle"><div><p class="kicker">跨设备同步</p><h2>云端数据</h2></div><span class="smallPill">${ok?"已配置":"未配置"}</span></div><div class="syncForm"><label>同步接口地址<input id="syncEndpoint" value="${esc(syncEndpoint)}" placeholder="https://.../sync"></label><label>家庭口令<input id="syncFamilyCode" value="${esc(syncFamilyCode)}" placeholder="全家设备填写同一个口令"></label><div class="syncButtons"><button data-action="enableSync">启用并同步</button><button class="secondary" data-action="disableSync">关闭同步</button></div><p class="syncText">状态：<span class="${cls}">${esc(syncStatus)}</span>。数据仍会先保存在本机；云端可用时会自动合并到同一份家庭数据。</p></div></section>`}
     function taskHtml(t){const done=state.checked[keyOf(activeChild,dayIndex,t.id)];return`<article class="taskItem ${done?"done":""}"><button data-task="${esc(t.id)}" aria-label="${done?"取消":"完成"}${esc(t.title)}">${done?"✓":""}</button><div><strong>${esc(t.title)}</strong><p>${esc(t.detail)}</p></div><span>+1★</span></article>`}
-    function spendHtml(){const list=state.spends[activeChild]||[];if(!list.length)return"<p>今天还没有消费记录。</p>";return list.slice(0,5).map(i=>`<div><span>${esc(i.date)}</span><strong>-${i.stars}★</strong><em>${esc(i.note)}</em><button data-spend="${i.id}">删除</button></div>`).join("")}
+    function spendHtml(){const list=(state.spends[activeChild]||[]).filter(i=>!state.deletedSpendIds[i.id]);if(!list.length)return"<p>今天还没有消费记录。</p>";return list.slice(0,5).map(i=>`<div><span>${esc(i.date)}</span><strong>-${i.stars}★</strong><em>${esc(i.note)}</em><button data-spend="${i.id}">删除</button></div>`).join("")}
     function planHtml(p,index){const done=p[activeChild].filter(t=>state.checked[keyOf(activeChild,index,t.id)]).length;return`<details ${index===dayIndex?"open":""}><summary><span>第${index+1}天 · ${p.date} ${p.weekday}</span><b>${done}/${p[activeChild].length}</b></summary><ol>${p[activeChild].map(t=>`<li>${esc(t.title)}：${esc(t.detail)}</li>`).join("")}</ol></details>`}
     function bind(){
       document.querySelectorAll("[data-child]").forEach(b=>b.onclick=()=>{activeChild=b.dataset.child;render()});
       document.querySelector('[data-action="prev"]').onclick=()=>{dayIndex=Math.max(0,dayIndex-1);render()};
       document.querySelector('[data-action="next"]').onclick=()=>{dayIndex=Math.min(plans.length-1,dayIndex+1);render()};
-      document.querySelectorAll("[data-task]").forEach(b=>b.onclick=()=>{const k=keyOf(activeChild,dayIndex,b.dataset.task);state.checked[k]=!state.checked[k];save();render()});
+      document.querySelectorAll("[data-task]").forEach(b=>b.onclick=()=>{const k=keyOf(activeChild,dayIndex,b.dataset.task);state.checked[k]=!state.checked[k];state.checkedUpdatedAt[k]=Date.now();save();render()});
       document.getElementById("spendStars").oninput=e=>{spendStars=e.target.value};
       document.getElementById("spendNote").oninput=e=>{spendNote=e.target.value};
-      document.querySelector('[data-action="addSpend"]').onclick=()=>{const stars=parseInt(spendStars,10);if(!stars||stars<1||!spendNote.trim())return;state.spends[activeChild]=[{id:String(Date.now()),date:plans[dayIndex].date+" "+plans[dayIndex].weekday,stars,note:spendNote.trim()},...(state.spends[activeChild]||[])];spendStars="0";spendNote="";save();render()};
-      document.querySelectorAll("[data-spend]").forEach(b=>b.onclick=()=>{state.spends[activeChild]=(state.spends[activeChild]||[]).filter(i=>i.id!==b.dataset.spend);save();render()});
+      document.getElementById("syncEndpoint").oninput=e=>{syncEndpoint=e.target.value};
+      document.getElementById("syncFamilyCode").oninput=e=>{syncFamilyCode=e.target.value};
+      document.querySelector('[data-action="enableSync"]').onclick=()=>{saveSyncSettings();syncNow("manual")};
+      document.querySelector('[data-action="disableSync"]').onclick=()=>{syncEndpoint="";syncFamilyCode="";syncSettings={endpoint:"",familyCode:"",enabled:false};localStorage.setItem(syncSettingsKey,JSON.stringify(syncSettings));syncStatus="本地模式";render()};
+      document.querySelector('[data-action="addSpend"]').onclick=()=>{const stars=parseInt(spendStars,10);if(!stars||stars<1||!spendNote.trim())return;const now=Date.now();state.spends[activeChild]=[{id:deviceId+"-"+now,date:plans[dayIndex].date+" "+plans[dayIndex].weekday,stars,note:spendNote.trim(),createdAt:now,updatedAt:now},...(state.spends[activeChild]||[])];spendStars="0";spendNote="";save();render()};
+      document.querySelectorAll("[data-spend]").forEach(b=>b.onclick=()=>{state.deletedSpendIds[b.dataset.spend]=Date.now();state.spends[activeChild]=(state.spends[activeChild]||[]).filter(i=>i.id!==b.dataset.spend);save();render()});
     }
     render();
+    if(syncReady())syncNow("auto");
   </script>
 </body>
 </html>
