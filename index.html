@@ -89,6 +89,12 @@
     .voided{opacity:.62;text-decoration:line-through}
     .history{grid-column:3/6;color:var(--muted);font-size:11px;line-height:1.4}
     .spendList p,.helperText{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+    .parentActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .parentActions button{min-height:44px;border:1px solid var(--line);border-radius:8px;background:#f8fafc;color:var(--ink);font-weight:900}
+    .awardForm{display:grid;grid-template-columns:128px 1fr;gap:10px}
+    .awardForm label{display:grid;gap:6px;color:var(--muted);font-size:13px;font-weight:800}
+    .awardForm input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;background:#f8fafc;color:var(--ink);padding:0 12px}
+    .awardForm button{grid-column:1/3;min-height:46px;border:0;border-radius:8px;background:#166534;color:#fff;font-weight:900}
     .homeworkList{display:grid;gap:10px;margin:0;padding-left:20px;color:var(--ink);line-height:1.55}
     .planList{display:grid;gap:8px}
     details{border:1px solid #e5e9f0;border-radius:8px;background:#fff;overflow:hidden}
@@ -111,8 +117,9 @@
       main{padding-left:12px;padding-right:12px}h1{font-size:34px}.account{padding:14px}
       .accountTop{grid-template-columns:38px 1fr}.dot{width:36px;height:36px}.balance{grid-column:2;justify-self:start}
       .accountStats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.accountStat{padding:8px}
-      .account::before{background-size:68% auto;opacity:.45}.spendForm,.spendForm button{grid-template-columns:1fr;grid-column:auto}
+      .account::before{background-size:68% auto;opacity:.45}.spendForm,.spendForm button,.awardForm,.awardForm button{grid-template-columns:1fr;grid-column:auto}
       .spendRow{grid-template-columns:1fr auto}.spendRow em,.spendRow button,.history{grid-column:span 2}.slotGrid{grid-template-columns:1fr}
+      .parentActions{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -212,15 +219,25 @@
       return list;
     }
     function defaultState(){
-      return{checked:{},checkedUpdatedAt:{},spends:{grade3:[],grade4:[]},parentCode:"",carryoverStars:null,schoolCarryoverV1:false,schoolBalanceResetV2:false,updatedAt:0};
+      return{checked:{},checkedUpdatedAt:{},spends:{grade3:[],grade4:[]},awards:{grade3:[],grade4:[]},parentCode:"",parentRecoveryCode:"",parentRecoveryResetV1:false,carryoverStars:null,schoolCarryoverV1:false,schoolBalanceResetV2:false,updatedAt:0};
     }
     function normalizeState(input){
       const s=Object.assign(defaultState(),input||{});
       s.checked=s.checked||{};
       s.checkedUpdatedAt=s.checkedUpdatedAt||{};
       s.spends=s.spends||{};
+      s.awards=s.awards||{};
       ["grade3","grade4"].forEach(child=>{
         s.spends[child]=(s.spends[child]||[]).map(item=>Object.assign({
+          id:String(Date.now())+"-"+Math.random().toString(36).slice(2),
+          date:"",
+          stars:0,
+          note:"",
+          createdAt:s.updatedAt||Date.now(),
+          updatedAt:s.updatedAt||Date.now(),
+          history:[]
+        },item));
+        s.awards[child]=(s.awards[child]||[]).map(item=>Object.assign({
           id:String(Date.now())+"-"+Math.random().toString(36).slice(2),
           date:"",
           stars:0,
@@ -233,7 +250,14 @@
       Object.keys(s.checked).forEach(k=>{if(!s.checkedUpdatedAt[k])s.checkedUpdatedAt[k]=s.updatedAt||Date.now()});
       resetOpeningBalances(s);
       migrateCarryover(s);
+      enableParentRecovery(s);
       return s;
+    }
+    function enableParentRecovery(s){
+      if(s.parentRecoveryResetV1)return;
+      s.parentCode="";
+      s.parentRecoveryCode="";
+      s.parentRecoveryResetV1=true;
     }
     function resetOpeningBalances(s){
       if(s.schoolBalanceResetV2)return;
@@ -263,6 +287,8 @@
     let dayIndex=todayIndex;
     let spendStars="";
     let spendNote="";
+    let awardStars="";
+    let awardNote="";
     function getTodayIndex(){
       const day=Math.floor((Date.now()-startDate.getTime())/86400000);
       return Math.min(planDays-1,Math.max(0,day));
@@ -312,6 +338,9 @@
     function spendTotal(child){
       return(state.spends[child]||[]).reduce((sum,item)=>sum+(item.voidedAt?0:Number(item.stars)||0),0);
     }
+    function awardTotal(child){
+      return(state.awards[child]||[]).reduce((sum,item)=>sum+(item.voidedAt?0:Number(item.stars)||0),0);
+    }
     function stats(child){
       const completed=checkedCount(child,false);
       const total=allTasks(child).length;
@@ -319,11 +348,12 @@
       const requiredTotal=allRequiredTasks(child).length;
       const bonus=persistenceRewards(child);
       const spent=spendTotal(child);
+      const parentAward=awardTotal(child);
       const initial=(state.carryoverStars&&Number.isFinite(Number(state.carryoverStars[child])))?Number(state.carryoverStars[child]):(fixedInitialStars[child]||0);
-      const earned=completed+bonus.total;
+      const earned=completed+bonus.total+parentAward;
       return{
         initial,baseEarned:completed,bonus:bonus.total,bonusItems:bonus.items,currentStreak:bonus.currentStreak,
-        earned,spent,balance:initial+earned-spent,completed,total,requiredCompleted,requiredTotal,
+        parentAward,earned,spent,balance:initial+earned-spent,completed,total,requiredCompleted,requiredTotal,
         percent:total?Math.round(completed/total*100):0
       };
     }
@@ -335,13 +365,47 @@
         const second=prompt("请再次输入家长口令确认。");
         if(first!==second){alert("两次口令不一致。");return false}
         state.parentCode=first;
+        state.parentRecoveryCode=makeRecoveryCode();
         save();
-        alert("家长口令已设置。");
+        alert(`家长口令已设置。\n恢复码：${state.parentRecoveryCode}\n请家长妥善记录；忘记口令时可用它重设。`);
         return true;
       }
       const code=prompt(`${action}\n请输入家长口令。`);
       if(code!==state.parentCode){alert("家长口令不正确。");return false}
       return true;
+    }
+    function makeRecoveryCode(){
+      return String(Math.floor(10000000+Math.random()*90000000));
+    }
+    function setParentCode(){
+      if(state.parentCode&&!askParent("修改家长口令需要验证原口令。"))return;
+      const first=prompt("请输入新的家长口令，至少4位。");
+      if(!first||first.length<4){alert("家长口令至少4位。");return}
+      const second=prompt("请再次输入新口令确认。");
+      if(first!==second){alert("两次口令不一致。");return}
+      state.parentCode=first;
+      state.parentRecoveryCode=makeRecoveryCode();
+      save();
+      alert(`家长口令已更新。\n新的恢复码：${state.parentRecoveryCode}\n旧恢复码已失效，请妥善记录。`);
+      render();
+    }
+    function recoverParentCode(){
+      if(!state.parentCode){setParentCode();return}
+      if(!state.parentRecoveryCode){
+        alert("旧版本没有恢复码。本次升级已允许重新设置口令，请刷新页面后使用“设置家长口令”。");
+        return;
+      }
+      const recovery=prompt("请输入8位家长恢复码。");
+      if(recovery!==state.parentRecoveryCode){alert("恢复码不正确。");return}
+      const first=prompt("请输入新的家长口令，至少4位。");
+      if(!first||first.length<4){alert("家长口令至少4位。");return}
+      const second=prompt("请再次输入新口令确认。");
+      if(first!==second){alert("两次口令不一致。");return}
+      state.parentCode=first;
+      state.parentRecoveryCode=makeRecoveryCode();
+      save();
+      alert(`口令已重设。\n新的恢复码：${state.parentRecoveryCode}\n旧恢复码已失效，请妥善记录。`);
+      render();
     }
     function machineOrder(index){
       const date=new Date(startDate.getTime()+index*86400000);
@@ -381,6 +445,16 @@
           <div class="taskList">${tasks.map(taskHtml).join("")}</div>
         </section>
         ${persistenceHtml()}
+        <section class="card">
+          <div class="sectionTitle"><div><p class="kicker">家长操作</p><h2>其他项目奖励</h2></div><span class="smallPill">计入余额</span></div>
+          <div class="awardForm">
+            <label>奖励星星数<input inputmode="numeric" id="awardStars" value="${esc(awardStars)}" placeholder="例：3"></label>
+            <label>奖励原因<input id="awardNote" value="${esc(awardNote)}" placeholder="例：主动做家务"></label>
+            <button data-action="addAward">家长确认并加星</button>
+          </div>
+          <div class="spendList">${awardHtml()}</div>
+          <p class="helperText">每笔家长奖励都会保留；新增、修改或作废均需家长口令，作废后不再计入余额。</p>
+        </section>
         <section class="card spendCard">
           <div class="sectionTitle"><div><p class="kicker">${info.name}</p><h2>今日消费</h2></div><span class="smallPill">完整保留记录</span></div>
           <div class="spendForm">
@@ -390,6 +464,14 @@
           </div>
           <div class="spendList">${spendHtml()}</div>
           <p class="helperText">修改或作废消费记录需要家长口令；作废后记录仍保留，只是不再计入累计消费。</p>
+        </section>
+        <section class="card">
+          <div class="sectionTitle"><div><p class="kicker">权限管理</p><h2>家长口令</h2></div><span class="smallPill">${state.parentCode?"已设置":"待设置"}</span></div>
+          <p class="helperText">${state.parentCode?"家长口令已启用。请保存设置时生成的8位恢复码，忘记口令时可用它重设。":"旧版家长口令已安全清除，请现在重新设置；系统会同时生成8位恢复码。"}</p>
+          <div class="parentActions">
+            <button data-action="setParentCode">${state.parentCode?"修改家长口令":"设置家长口令"}</button>
+            <button data-action="recoverParentCode">忘记口令 / 用恢复码重设</button>
+          </div>
         </section>
         <section class="card">
           <div class="sectionTitle"><div><p class="kicker">完整清单</p><h2>本月任务说明</h2></div></div>
@@ -403,6 +485,7 @@
           <strong>奖励和权限规则</strong>
           <p>每日每项完成得1★。四年级基础满星6★；五年级基础满星6★，钢琴练习可额外得1★，但不参与连续满星判定。</p>
           <p>连续3天基础项满星额外+1★，连续7天基础项满星额外+3★，可叠加。过期补打卡、修改过去日期打卡、修改或作废消费记录均需家长口令。</p>
+          <p>家长可因家务、主动学习等其他项目直接奖励星星；奖励会单独记录并计入累计获得和余额。</p>
           <p>数据只保存在当前设备浏览器内，不再使用云端同步。</p>
         </section>`;
       bind();
@@ -413,6 +496,7 @@
         ["初始余额",st.initial+"★"],
         ["任务获得",st.baseEarned+"★"],
         ["持之以恒",st.bonus+"★"],
+        ["家长奖励",st.parentAward+"★"],
         ["累计获得",st.earned+"★"],
         ["累计消费",st.spent+"★"]
       ].filter(Boolean);
@@ -454,6 +538,18 @@
         </div>`;
       }).join("");
     }
+    function awardHtml(){
+      const list=(state.awards[activeChild]||[]).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      if(!list.length)return"<p>还没有家长奖励记录。</p>";
+      return list.slice(0,30).map(i=>{
+        const history=(i.history||[]).map(h=>`原记录：${h.stars}★，${h.note}`).join("；");
+        return`<div class="spendRow ${i.voidedAt?"voided":""}">
+          <span>${esc(i.date)}</span><strong>+${Number(i.stars)||0}★</strong><em>${esc(i.note)}${i.voidedAt?"（已作废）":""}</em>
+          ${i.voidedAt?`<span></span><span></span>`:`<button class="edit" data-edit-award="${esc(i.id)}">修改</button><button data-void-award="${esc(i.id)}">作废</button>`}
+          ${history?`<span class="history">${esc(history)}</span>`:""}
+        </div>`;
+      }).join("");
+    }
     function planHtml(p,index){
       const done=dayDone(activeChild,index,false);
       return`<details ${index===dayIndex?"open":""}>
@@ -463,6 +559,9 @@
     }
     function findSpend(id){
       return(state.spends[activeChild]||[]).find(i=>String(i.id)===String(id));
+    }
+    function findAward(id){
+      return(state.awards[activeChild]||[]).find(i=>String(i.id)===String(id));
     }
     function bind(){
       document.querySelectorAll("[data-child]").forEach(b=>b.onclick=()=>{activeChild=b.dataset.child;render()});
@@ -479,6 +578,22 @@
       });
       document.getElementById("spendStars").oninput=e=>{spendStars=e.target.value};
       document.getElementById("spendNote").oninput=e=>{spendNote=e.target.value};
+      document.getElementById("awardStars").oninput=e=>{awardStars=e.target.value};
+      document.getElementById("awardNote").oninput=e=>{awardNote=e.target.value};
+      document.querySelector('[data-action="setParentCode"]').onclick=setParentCode;
+      document.querySelector('[data-action="recoverParentCode"]').onclick=recoverParentCode;
+      document.querySelector('[data-action="addAward"]').onclick=()=>{
+        const stars=parseInt(awardStars,10);
+        if(!stars||stars<1||!awardNote.trim()){alert("请填写奖励星星数和奖励原因。");return}
+        if(dayIndex>todayIndex){alert("不能提前记录未来日期的奖励。");return}
+        if(!askParent("家长直接奖励星星需要确认。"))return;
+        const now=Date.now();
+        state.awards[activeChild]=[{id:`${termPrefix}-${activeChild}-award-${now}`,date:plans[dayIndex].date+" "+plans[dayIndex].weekday,stars,note:awardNote.trim(),createdAt:now,updatedAt:now,history:[]},...(state.awards[activeChild]||[])];
+        awardStars="";
+        awardNote="";
+        save();
+        render();
+      };
       document.querySelector('[data-action="addSpend"]').onclick=()=>{
         const stars=parseInt(spendStars,10);
         if(!stars||stars<1||!spendNote.trim()){alert("请填写使用星星数和使用途径。");return}
@@ -509,6 +624,30 @@
         const item=findSpend(b.dataset.voidSpend);
         if(!item||item.voidedAt)return;
         if(!askParent("作废消费记录需要家长确认。"))return;
+        item.voidedAt=Date.now();
+        item.updatedAt=Date.now();
+        save();
+        render();
+      });
+      document.querySelectorAll("[data-edit-award]").forEach(b=>b.onclick=()=>{
+        const item=findAward(b.dataset.editAward);
+        if(!item||item.voidedAt)return;
+        if(!askParent("修改家长奖励记录需要确认。"))return;
+        const stars=parseInt(prompt("新的奖励星星数：",String(item.stars)),10);
+        const note=prompt("新的奖励原因：",item.note);
+        if(!stars||stars<1||!note||!note.trim()){alert("修改取消：星星数和原因都不能为空。");return}
+        item.history=item.history||[];
+        item.history.push({stars:item.stars,note:item.note,updatedAt:item.updatedAt||item.createdAt||Date.now()});
+        item.stars=stars;
+        item.note=note.trim();
+        item.updatedAt=Date.now();
+        save();
+        render();
+      });
+      document.querySelectorAll("[data-void-award]").forEach(b=>b.onclick=()=>{
+        const item=findAward(b.dataset.voidAward);
+        if(!item||item.voidedAt)return;
+        if(!askParent("作废家长奖励记录需要确认。"))return;
         item.voidedAt=Date.now();
         item.updatedAt=Date.now();
         save();
