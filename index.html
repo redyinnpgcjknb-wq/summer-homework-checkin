@@ -522,7 +522,7 @@
     }
     function findSpend(id){return(state.spends[activeChild]||[]).find(i=>String(i.id)===String(id))}
     function findAward(id){return(state.awards[activeChild]||[]).find(i=>String(i.id)===String(id))}
-    function exportData(){
+    async function exportData(){
       if(!askParent("导出完整打卡数据需要家长确认。"))return;
       runDueSettlements();
       const exportedAt=new Date();
@@ -559,11 +559,18 @@
         },
         privacy:"家长口令和恢复码未包含在导出文件中。"
       };
-      const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
-      const url=URL.createObjectURL(blob),link=document.createElement("a");
-      link.href=url;link.download=`家庭学习打卡_2026-10_${localIso(exportedAt)}.json`;document.body.appendChild(link);link.click();link.remove();
+      const json=JSON.stringify(payload,null,2),fileName=`家庭学习打卡_2026-10_${localIso(exportedAt)}.json`;
+      const file=new File([json],fileName,{type:"application/json;charset=utf-8"});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        try{
+          await navigator.share({files:[file],title:"家庭学习打卡完整数据",text:"家庭学习打卡完整数据（不含家长口令和恢复码）"});
+          return;
+        }catch(error){if(error&&error.name==="AbortError")return}
+      }
+      const url=URL.createObjectURL(file),link=document.createElement("a");
+      link.href=url;link.download=fileName;document.body.appendChild(link);link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
-      alert("完整数据已导出。文件不包含家长口令和恢复码，可将下载的JSON文件上传给我分析。");
+      alert(`完整数据已导出为 ${fileName}。文件不包含家长口令和恢复码，可将下载的JSON文件上传给我分析。`);
     }
     function bindInputs(){
       [["spendStars",v=>spendStars=v],["spendNote",v=>spendNote=v],["awardStars",v=>awardStars=v],["awardNote",v=>awardNote=v],["poolAddStars",v=>poolAddStars=v],["poolAddNote",v=>poolAddNote=v],["poolGiveStars",v=>poolGiveStars=v],["poolGiveNote",v=>poolGiveNote=v]].forEach(([id,setter])=>{document.getElementById(id).oninput=e=>setter(e.target.value)});
