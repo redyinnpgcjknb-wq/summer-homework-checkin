@@ -117,6 +117,15 @@
     .progressPanel .bar em{background:var(--pace,var(--accent))}
     .progressPanel p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
     .progressPanel .progressRule{border-top:1px solid #e5e9f0;padding-top:8px;color:var(--ink);font-weight:700}
+    .challengePanel{grid-column:1/3;display:grid;grid-template-columns:1fr auto;gap:12px 18px;align-items:center;border:1px solid #f4ce67;border-radius:8px;background:#fff8dd;padding:14px}
+    .challengePanel h3{margin:0 0 5px;font-size:18px}
+    .challengePanel p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+    .challengeScore{text-align:right;white-space:nowrap}
+    .challengeScore strong{display:block;color:var(--gold);font-size:26px}
+    .challengeScore span{color:var(--muted);font-size:12px;font-weight:800}
+    .challengeTrack{grid-column:1/3;position:relative;height:10px;border-radius:999px;background:#f1e6c5;overflow:hidden}
+    .challengeTrack em{display:block;height:100%;border-radius:inherit;background:var(--gold)}
+    .challengeMilestones{grid-column:1/3;display:flex;justify-content:space-between;color:#8a6711;font-size:12px;font-weight:900}
     .settlementRule{margin:12px 0 0;border-top:1px solid #e5e9f0;padding-top:10px;color:var(--muted);font-size:12px;line-height:1.55}
     .ledgerList{display:grid;gap:8px}
     .ledgerRow{display:grid;grid-template-columns:86px 62px 1fr;gap:8px;align-items:start;border-bottom:1px solid #eef1f5;padding:9px 0;color:var(--muted);font-size:12px}
@@ -137,6 +146,20 @@
     .poolForm button{min-height:44px;border:0;border-radius:8px;background:var(--ink);color:#fff;font-weight:900}
     .poolForm.award button{background:#166534}
     .ruleList{display:grid;gap:7px;margin:0;padding-left:20px;color:#dbe4ef;line-height:1.5}
+    .foldCard{padding:0;overflow:hidden}
+    .foldCard>summary{min-height:68px;padding:12px 16px;background:#fff}
+    .foldCard>summary::after{content:"+";display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#eef2f7;color:var(--ink);font-size:22px;line-height:1}
+    .foldCard[open]>summary::after{content:"−"}
+    .foldTitle{display:block}
+    .foldTitle small{display:block;margin-bottom:3px;color:var(--muted);font-size:12px}
+    .foldTitle strong{font-size:19px;color:var(--ink)}
+    .foldBody{display:grid;gap:16px;border-top:1px solid #eef1f5;padding:16px}
+    .toolSection+.toolSection{border-top:1px solid #e5e9f0;padding-top:16px}
+    .toolSection h3{margin:0 0 12px;font-size:18px}
+    .subRecord{margin-top:12px;border:0;background:transparent}
+    .subRecord summary{min-height:40px;padding:0;color:var(--muted);font-size:13px}
+    .subRecord summary::after{content:"查看";color:var(--blue);font-size:12px}
+    .subRecord[open] summary::after{content:"收起"}
     @media (min-width:700px){main{padding-top:28px}.accountGrid{grid-template-columns:1fr 1fr}}
     @media (max-width:420px){
       main{padding-left:12px;padding-right:12px}h1{font-size:34px}.account{padding:14px}
@@ -145,6 +168,7 @@
       .account::before{background-size:68% auto;opacity:.45}.spendForm,.spendForm button,.awardForm,.awardForm button{grid-template-columns:1fr;grid-column:auto}
       .spendRow{grid-template-columns:1fr auto}.spendRow em,.spendRow button,.history{grid-column:span 2}
       .parentActions,.progressGrid,.poolForms{grid-template-columns:1fr}.parentActions button.export,.parentActions button.copy{grid-column:auto}
+      .challengePanel{grid-column:auto}.challengeTrack,.challengeMilestones{grid-column:1/3}
       .ledgerRow{grid-template-columns:74px 54px 1fr}
     }
   </style>
@@ -172,30 +196,31 @@
     const monthPeriod={id:"nov07-30",label:"11月7日—30日",start:6,end:29,due:"2026-11-30T22:00:00+08:00",pianoTarget:10};
     const schoolTask={id:"school-homework",title:"学校作业完成 + 作业前计划",detail:"开始前用5分钟看清全部作业并排好完成顺序；完成后逐项检查，数学错题当天订正；确认没有漏项后才可打卡。"};
     const mathTask={id:"math-corrections-xueba",title:"错题订正 + 五星学霸数学同步15-25分钟",detail:"先订正当天数学错题1-3道；再按学校进度完成《五星学霸》对应内容约1页。错题较多时，只完成错题订正也算完成；不提前赶进度。"};
-    const englishTaskGrade3={id:"english-machine-words",title:"英语单词打卡15-20分钟",detail:"在学习机完成当天课程中的8-10个单词；每个单词和例句大声朗读至少2遍，并完成拼写。"};
-    const englishTaskGrade4={id:"english-machine-words",title:"英语单词打卡25-30分钟",detail:"在学习机完成当天课程；每个单词和例句大声朗读至少2遍，并完成拼写。"};
+    const englishTaskGrade3={id:"english-machine-words",title:"英语单词打卡15-20分钟",detail:"在学习机完成当天课程；每个单词和例句大声朗读至少2遍。"};
+    const englishTaskGrade4={id:"english-machine-words",title:"英语单词打卡15-20分钟",detail:"在学习机完成当天课程；每个单词和例句大声朗读至少2遍。"};
     const readingTask={id:"reading",title:"《七彩语文》或《快乐学习报》阅读20-30分钟",detail:"连续专注阅读不少于20分钟；不懂的词语和名词要查询，并在报刊上做笔记备注。结束后能讲清主要内容和一个印象最深的情节或知识点。"};
     const sportTask={id:"sport",title:"跳绳500个",detail:"可分5组×100个完成，组间休息30-60秒；开始前热身、结束后拉伸，累计达到500个并如实记录后打卡。"};
     const attitudeTask={id:"attitude-organization",title:"按时开始 / 不拖拉 + 书桌书包整理",detail:"在家庭约定时间前后5分钟内开始；学习期间不玩无关物品、不擅自离开；结束后清空桌面，并按第二天课表检查书本、作业和文具。三项全部完成才能打卡。"};
     const pianoTask={id:"piano",title:"钢琴练习30分钟",detail:"完成30分钟钢琴练习，保持坐姿、手型和节奏稳定。每天完成可得1★；周进度按计划目标计数，超额练习不抵消其他漏项。",required:false};
     const travelTask={id:"travel-observation",title:"旅行观察与分享",detail:"当天任选一处见闻，用照片、画画或口头讲述记录一个新发现；自愿完成可得1★，不计周进度和月进度。",required:false};
+    const optionalProgressTask=task=>Object.assign({},task,{required:false,progressBonus:true});
     const plans=buildPlans();
     const todayIndex=getTodayIndex();
     const fullHomework={
       grade3:[
         "工作日完成学校作业和作业前计划，并完成按时开始与书桌书包整理。",
-        "周一、周三完成英语单词15-20分钟；周二、周四完成数学错题订正和《五星学霸》同步。",
-        "每周阅读3次，安排在周二、周四、周日；每次20-30分钟并完成查询和备注。",
-        "每周跳绳500个共4次，安排在周一、周三、周五、周日。",
-        "周五为轻任务日；周六休整或补缺，不设置必打卡。",
+        "周一至周五完成英语单词15-20分钟；周一至周四完成数学错题订正和《五星学霸》同步。",
+        "周二、周四完成阅读；周一、周三、周五完成跳绳500个。",
+        "周五数学为选做；周六、周日的英语、数学、阅读和运动均为选做。选做完成只增加进度分子，不增加分母。",
+        "每周选做完成4项奖1★，完成8项再奖1★，每周最多奖励2★。",
         "11月15日—18日秋假出游，只保留可选的旅行观察与分享，不计进度。"
       ],
       grade4:[
         "工作日完成学校作业和作业前计划，并完成按时开始与书桌书包整理。",
-        "周一、周三完成数学错题订正和《五星学霸》同步；周二、周四完成英语单词25-30分钟，与四年级错开学习机。",
-        "每周阅读3次，安排在周二、周四、周日；每次20-30分钟并完成查询和备注。",
-        "每周跳绳500个共4次，安排在周一、周三、周五、周日。",
-        "周五为轻任务日；周六休整或补缺，不设置必打卡。",
+        "周一至周五完成英语单词15-20分钟；周一至周四完成数学错题订正和《五星学霸》同步。",
+        "周二、周四完成阅读；周一、周三、周五完成跳绳500个。",
+        "周五数学为选做；周六、周日的英语、数学、阅读和运动均为选做。选做完成只增加进度分子，不增加分母。",
+        "每周选做完成4项奖1★，完成8项再奖1★，每周最多奖励2★。",
         "每日显示钢琴练习30分钟；正常完整周进度目标4次，秋假后的短周目标2次。",
         "11月15日—18日秋假出游，只保留可选的旅行观察与分享，不计进度。"
       ]
@@ -213,12 +238,26 @@
         const day=date.getDate(),dow=date.getDay(),travel=day>=15&&day<=18;
         const grade3=[],grade4=[];
         if(travel){grade3.push(travelTask);grade4.push(travelTask)}
-        else{
+        else if(day<8){
           if(dow>=1&&dow<=5){grade3.push(schoolTask,attitudeTask);grade4.push(schoolTask,attitudeTask)}
           if(dow===1||dow===3){grade3.push(englishTaskGrade3);grade4.push(mathTask)}
           if(dow===2||dow===4){grade3.push(mathTask);grade4.push(englishTaskGrade4)}
           if(dow===2||dow===4||dow===0){grade3.push(readingTask);grade4.push(readingTask)}
           if(dow===1||dow===3||dow===5||dow===0){grade3.push(sportTask);grade4.push(sportTask)}
+          grade4.push(pianoTask);
+        }else{
+          if(dow>=1&&dow<=5){
+            grade3.push(schoolTask,attitudeTask,englishTaskGrade3);
+            grade4.push(schoolTask,attitudeTask,englishTaskGrade4);
+          }
+          if(dow>=1&&dow<=4){grade3.push(mathTask);grade4.push(mathTask)}
+          if(dow===5){grade3.push(optionalProgressTask(mathTask));grade4.push(optionalProgressTask(mathTask))}
+          if(dow===2||dow===4){grade3.push(readingTask);grade4.push(readingTask)}
+          if(dow===1||dow===3||dow===5){grade3.push(sportTask);grade4.push(sportTask)}
+          if(dow===0||dow===6){
+            grade3.push(optionalProgressTask(englishTaskGrade3),optionalProgressTask(mathTask),optionalProgressTask(readingTask),optionalProgressTask(sportTask));
+            grade4.push(optionalProgressTask(englishTaskGrade4),optionalProgressTask(mathTask),optionalProgressTask(readingTask),optionalProgressTask(sportTask));
+          }
           grade4.push(pianoTask);
         }
         list.push({
@@ -344,26 +383,38 @@
       return opening+novemberCheckedAt(child,cutoff)+awardTotal(child,cutoff)+poolAwardTotal(child,cutoff)+autoTotal(child,cutoff)-spendTotal(child,cutoff);
     }
     function poolBalance(){return Number(state.starPoolInitial||0)+(state.poolTransactions||[]).reduce((sum,item)=>sum+(Number(item.stars)||0),0)}
+    function optionalProgressDone(child,start,end){
+      let count=0;
+      for(let i=start;i<=end;i++)plans[i][child].forEach(task=>{if(task.progressBonus&&state.checked[keyOf(child,i,task.id)])count++});
+      return count;
+    }
+    function optionalChallengeProgress(child,period){
+      const count=optionalProgressDone(child,period.start,period.end),reward=Math.min(2,Math.floor(count/4));
+      const next=count<4?4-count:count<8?8-count:0;
+      return{count,reward,next,maxReward:2};
+    }
     function periodProgress(child,period){
       let requiredDone=0,requiredTotal=0,pianoActual=0;
       for(let i=period.start;i<=period.end;i++){
         requiredTotal+=requiredTasks(child,i).length;requiredDone+=dayDone(child,i,true);
         if(child==="grade4"&&state.checked[keyOf(child,i,"piano")])pianoActual++;
       }
+      const optionalDone=optionalProgressDone(child,period.start,period.end);
       const pianoTarget=child==="grade4"?Number(period.pianoTarget||0):0;
-      const done=requiredDone+(child==="grade4"?Math.min(pianoActual,pianoTarget):0);
+      const done=requiredDone+optionalDone+(child==="grade4"?Math.min(pianoActual,pianoTarget):0);
       const total=requiredTotal+pianoTarget;
-      return{done,total,ratio:total?done/total:0,percent:total?Math.round(done/total*100):0,pianoActual:Math.min(pianoActual,7),pianoTarget};
+      return{done,total,ratio:total?done/total:0,percent:total?Math.round(done/total*100):0,optionalDone,pianoActual:Math.min(pianoActual,7),pianoTarget};
     }
     function monthProgress(child){
       let requiredDone=0,requiredTotal=0,pianoActual=0,pianoCounted=0;
       for(let i=monthPeriod.start;i<=monthPeriod.end;i++){requiredTotal+=requiredTasks(child,i).length;requiredDone+=dayDone(child,i,true)}
+      const optionalDone=optionalProgressDone(child,monthPeriod.start,monthPeriod.end);
       if(child==="grade4")weeklyPeriods.forEach(period=>{
         let count=0;for(let i=period.start;i<=period.end;i++)if(state.checked[keyOf(child,i,"piano")])count++;
         pianoActual+=Math.min(count,period.end-period.start+1);pianoCounted+=Math.min(count,Number(period.pianoTarget||0));
       });
-      const pianoTarget=child==="grade4"?Number(monthPeriod.pianoTarget||0):0,done=requiredDone+pianoCounted,total=requiredTotal+pianoTarget;
-      return{done,total,ratio:total?done/total:0,percent:total?Math.round(done/total*100):0,pianoActual,pianoTarget};
+      const pianoTarget=child==="grade4"?Number(monthPeriod.pianoTarget||0):0,done=requiredDone+optionalDone+pianoCounted,total=requiredTotal+pianoTarget;
+      return{done,total,ratio:total?done/total:0,percent:total?Math.round(done/total*100):0,optionalDone,pianoActual,pianoTarget};
     }
     function currentWeeklyPeriod(){
       const nowIso=localIso(new Date());
@@ -424,8 +475,10 @@
               detail=`结算余额${base}★，每负5★收取1★利息，本次最多扣5★。`;
             }
           }else if(event.type==="weekly"){
-            progress=periodProgress(child,event.period);stars=weeklyReward(progress);
-            detail=`${event.period.label}完成${progress.done}/${progress.total}项（${progress.percent}%）。`;
+            progress=periodProgress(child,event.period);
+            const challenge=optionalChallengeProgress(child,event.period),baseReward=weeklyReward(progress);
+            stars=baseReward+challenge.reward;
+            detail=`${event.period.label}完成${progress.done}/${progress.total}项（${progress.percent}%）；基础奖惩${signedStars(baseReward)}，选做${challenge.count}项奖励${challenge.reward}★。`;
           }else{
             progress=monthProgress(child);stars=monthlyReward(progress);
             detail=`${monthPeriod.label}完成${progress.done}/${progress.total}项（${progress.percent}%）。`;
@@ -478,37 +531,23 @@
           <div class="sectionTitle"><div><p class="kicker">${info.name}</p><h2>今日打卡</h2></div><div class="todayScore"><strong>${requiredDone}/${requiredTotal}</strong><span>${requiredTotal?`必打卡满星${requiredTotal}★${activeChild==="grade4"?"，钢琴另+1★":""}`:"今日无必打卡任务"}</span></div></div>
           <div class="taskList">${tasks.map(taskHtml).join("")}</div>
         </section>
-        <section class="card">
-          <div class="sectionTitle"><div><p class="kicker">自动记账</p><h2>利息与进度奖惩明细</h2></div></div>
-          ${autoLedgerHtml()}
-          <p class="settlementRule">余额结息：11月15日、30日22:00自动结算；正余额在对应进度达到80%后每满10★奖励1★，负余额每负5★扣1★；单次最多奖或扣5★。</p>
-        </section>
-        <section class="card">
-          <div class="sectionTitle"><div><p class="kicker">家长操作</p><h2>星星池充值与发放</h2></div></div>
-          <div class="poolForms">
-            <div class="poolForm"><h3>家长充值</h3><label>增加星星数<input inputmode="numeric" id="poolAddStars" value="${esc(poolAddStars)}" placeholder="例：20"></label><label>充值说明<input id="poolAddNote" value="${esc(poolAddNote)}" placeholder="例：本月家庭星星额度"></label><button data-action="poolAdd">验证口令并充值</button></div>
-            <div class="poolForm award"><h3>奖励给${info.shortName}</h3><label>发放星星数<input inputmode="numeric" id="poolGiveStars" value="${esc(poolGiveStars)}" placeholder="例：5"></label><label>奖励原因<input id="poolGiveNote" value="${esc(poolGiveNote)}" placeholder="例：主动帮助家人"></label><button data-action="poolGive">验证口令并发放</button></div>
+        <details class="foldCard card">
+          <summary><span class="foldTitle"><small>自动记账</small><strong>结算与奖惩记录</strong></span></summary>
+          <div class="foldBody">${autoLedgerHtml()}<p class="settlementRule">余额结息：11月15日、30日22:00自动结算；正余额在对应进度达到80%后每满10★奖励1★，负余额每负5★扣1★；单次最多奖或扣5★。</p></div>
+        </details>
+        <details class="foldCard card">
+          <summary><span class="foldTitle"><small>低频操作已收起</small><strong>家长工具与账户记录</strong></span></summary>
+          <div class="foldBody">
+            <section class="toolSection"><h3>星星池充值与发放</h3><div class="poolForms"><div class="poolForm"><h3>家长充值</h3><label>增加星星数<input inputmode="numeric" id="poolAddStars" value="${esc(poolAddStars)}" placeholder="例：20"></label><label>充值说明<input id="poolAddNote" value="${esc(poolAddNote)}" placeholder="例：本月家庭星星额度"></label><button data-action="poolAdd">验证口令并充值</button></div><div class="poolForm award"><h3>奖励给${info.shortName}</h3><label>发放星星数<input inputmode="numeric" id="poolGiveStars" value="${esc(poolGiveStars)}" placeholder="例：5"></label><label>奖励原因<input id="poolGiveNote" value="${esc(poolGiveNote)}" placeholder="例：主动帮助家人"></label><button data-action="poolGive">验证口令并发放</button></div></div><details class="subRecord"><summary>星星池记录</summary>${poolLedgerHtml()}</details><p class="helperText">充值和发放均需家长口令。</p></section>
+            <section class="toolSection"><h3>其他项目奖励</h3><div class="awardForm"><label>奖励星星数<input inputmode="numeric" id="awardStars" value="${esc(awardStars)}" placeholder="例：3"></label><label>奖励原因<input id="awardNote" value="${esc(awardNote)}" placeholder="例：主动做家务"></label><button data-action="addAward">家长确认并加星</button></div><details class="subRecord"><summary>家长奖励记录</summary><div class="spendList">${awardHtml()}</div></details></section>
+            <section class="toolSection"><h3>${info.shortName}消费</h3><div class="spendForm"><label>使用星星数<input inputmode="numeric" id="spendStars" value="${esc(spendStars)}" placeholder="例：5"></label><label>使用途径<input id="spendNote" placeholder="例：20分钟动画" value="${esc(spendNote)}"></label><button data-action="addSpend">记录消费</button></div><details class="subRecord"><summary>消费明细与修改记录</summary><div class="spendList">${spendHtml()}</div></details><p class="helperText">修改或作废记录需要家长口令，原记录会继续保留。</p></section>
+            <section class="toolSection"><h3>家长口令与数据</h3><p class="helperText">用于过期补打、账目管理、星星池操作和完整数据导出。</p><div class="parentActions"><button data-action="setParentCode">${state.parentCode?"修改家长口令":"设置家长口令"}</button><button data-action="recoverParentCode">忘记口令 / 用恢复码重设</button><button class="export" data-action="exportData">验证口令并导出 / 分享完整数据</button><button class="copy" data-action="copyData">验证口令并复制完整数据</button></div></section>
           </div>
-          ${poolLedgerHtml()}
-          <p class="helperText">星星池初始30★。充值和发放均需家长口令。</p>
-        </section>
-        <section class="card">
-          <div class="sectionTitle"><div><p class="kicker">家长操作</p><h2>其他项目奖励</h2></div><span class="smallPill">计入总账户</span></div>
-          <div class="awardForm"><label>奖励星星数<input inputmode="numeric" id="awardStars" value="${esc(awardStars)}" placeholder="例：3"></label><label>奖励原因<input id="awardNote" value="${esc(awardNote)}" placeholder="例：主动做家务"></label><button data-action="addAward">家长确认并加星</button></div>
-          <div class="spendList">${awardHtml()}</div><p class="helperText">每笔家长奖励都会保留；新增、修改或作废均需家长口令。</p>
-        </section>
-        <section class="card spendCard">
-          <div class="sectionTitle"><div><p class="kicker">${info.name}</p><h2>今日消费</h2></div></div>
-          <div class="spendForm"><label>使用星星数<input inputmode="numeric" id="spendStars" value="${esc(spendStars)}" placeholder="例：5"></label><label>使用途径<input id="spendNote" placeholder="例：20分钟动画" value="${esc(spendNote)}"></label><button data-action="addSpend">记录消费</button></div>
-          <div class="spendList">${spendHtml()}</div><p class="helperText">修改或作废消费记录需要家长口令；作废后记录仍保留。</p>
-        </section>
-        <section class="card">
-          <div class="sectionTitle"><div><p class="kicker">权限管理</p><h2>家长口令</h2></div><span class="smallPill">${state.parentCode?"已设置":"待设置"}</span></div>
-          <p class="helperText">家长口令用于所有过期补打、修改或作废账目、星星池充值和发放。</p>
-          <div class="parentActions"><button data-action="setParentCode">${state.parentCode?"修改家长口令":"设置家长口令"}</button><button data-action="recoverParentCode">忘记口令 / 用恢复码重设</button><button class="export" data-action="exportData">验证家长口令并导出 / 分享完整数据</button><button class="copy" data-action="copyData">验证家长口令并复制完整数据</button></div>
-        </section>
-        <section class="card"><div class="sectionTitle"><div><p class="kicker">完整清单</p><h2>本月任务说明</h2></div></div><ul class="homeworkList">${fullHomework[activeChild].map(i=>`<li>${esc(i)}</li>`).join("")}</ul></section>
-        <section class="card"><div class="sectionTitle"><div><p class="kicker">${plans.length}天安排</p><h2>每日任务详情</h2></div></div><div class="planList">${plans.map(planHtml).join("")}</div></section>`;
+        </details>
+        <details class="foldCard card">
+          <summary><span class="foldTitle"><small>11月完整安排</small><strong>任务说明与每日清单</strong></span></summary>
+          <div class="foldBody"><ul class="homeworkList">${fullHomework[activeChild].map(i=>`<li>${esc(i)}</li>`).join("")}</ul><div class="planList">${plans.map(planHtml).join("")}</div></div>
+        </details>`;
       bind();
     }
     function accountHtml(child,st){
@@ -523,19 +562,23 @@
     }
     function progressDashboardHtml(){
       const period=currentWeeklyPeriod(),week=periodProgress(activeChild,period),month=monthProgress(activeChild),weekPace=paceStatus(week,period),monthPace=paceStatus(month,monthPeriod);
-      const weekPiano=activeChild==="grade4"?`钢琴实际${week.pianoActual}次，进度目标${week.pianoTarget}次；奖惩计算最多计${week.pianoTarget}次。`:"每个必打卡项目权重相同。";
-      const monthPiano=activeChild==="grade4"?`钢琴月目标${month.pianoTarget}次，当前实际${month.pianoActual}次。11月1—6日与15—18日不计月进度。`:"11月1—6日与15—18日不计月进度。";
+      const challenge=optionalChallengeProgress(activeChild,period);
+      const challengeMessage=challenge.next?`再完成${challenge.next}项，可解锁下一颗奖励星。`:`两档奖励已全部解锁，本周最多奖励2★。`;
+      const weekPiano=activeChild==="grade4"?`选做已完成${week.optionalDone}项；钢琴实际${week.pianoActual}次，进度目标${week.pianoTarget}次。`:`选做已完成${week.optionalDone}项；每个必打卡项目权重相同。`;
+      const monthPiano=activeChild==="grade4"?`选做已完成${month.optionalDone}项；钢琴月目标${month.pianoTarget}次，当前实际${month.pianoActual}次。`:`选做已完成${month.optionalDone}项。`;
       return`<section class="card" style="--accent:${childInfo[activeChild].color}">
         <div class="sectionTitle"><div><h2>${childInfo[activeChild].shortName}进度看板</h2></div><span class="smallPill">${period.label}</span></div>
         <div class="progressGrid">
           <div class="progressPanel" style="--pace:${weekPace.color}"><header><strong>当前周进度 · ${weekPace.label}</strong><b>${week.percent}%</b></header><i class="bar"><em style="width:${Math.min(100,week.percent)}%"></em></i><p>${week.done}/${week.total}项。${weekPiano}</p><p class="progressRule">周结算：100%奖10★；90%—99%奖5★；70%—89%不奖不扣；60%—69%扣3★；低于60%扣5★。</p></div>
-          <div class="progressPanel" style="--pace:${monthPace.color}"><header><strong>11月月度进度 · ${monthPace.label}</strong><b>${month.percent}%</b></header><i class="bar"><em style="width:${Math.min(100,month.percent)}%"></em></i><p>${month.done}/${month.total}项。${monthPiano}</p><p class="progressRule">月结算：100%奖30★；90%—99%奖15★；80%—89%奖5★；70%—79%不奖不扣；低于70%扣10★。</p></div>
+          <div class="progressPanel" style="--pace:${monthPace.color}"><header><strong>11月月度进度 · ${monthPace.label}</strong><b>${month.percent}%</b></header><i class="bar"><em style="width:${Math.min(100,month.percent)}%"></em></i><p>${month.done}/${month.total}项。${monthPiano}11月1—6日与15—18日不计月进度。</p><p class="progressRule">月结算：100%奖30★；90%—99%奖15★；80%—89%奖5★；70%—79%不奖不扣；低于70%扣10★。</p></div>
+          <div class="challengePanel"><div><h3>本周选做挑战</h3><p>选做任务只增加进度分子，不增加分母。${challengeMessage}</p></div><div class="challengeScore"><strong>${challenge.count}项</strong><span>已解锁 ${challenge.reward}★</span></div><i class="challengeTrack"><em style="width:${Math.min(100,challenge.count/8*100)}%"></em></i><div class="challengeMilestones"><span>开始</span><span>4项 · 1★</span><span>8项 · 2★</span></div></div>
         </div>
       </section>`;
     }
     function taskHtml(t){
       const done=state.checked[keyOf(activeChild,dayIndex,t.id)],optional=t.required===false;
-      return`<article class="taskItem ${done?"done":""} ${optional?"optional":""}"><button data-task="${esc(t.id)}" aria-label="${done?"取消":"完成"}${esc(t.title)}">${done?"✓":""}</button><div><strong>${esc(t.title)}${optional?"（可选）":""}</strong><p>${esc(t.detail)}</p></div><span>+1★</span></article>`;
+      const optionalLabel=t.progressBonus?"（选做 · 计入进度）":optional?"（可选）":"";
+      return`<article class="taskItem ${done?"done":""} ${optional?"optional":""}"><button data-task="${esc(t.id)}" aria-label="${done?"取消":"完成"}${esc(t.title)}">${done?"✓":""}</button><div><strong>${esc(t.title)}${optionalLabel}</strong><p>${esc(t.detail)}</p></div><span>+1★</span></article>`;
     }
     function autoLedgerHtml(){
       const list=(state.autoLedger||[]).filter(i=>i.child===activeChild).sort((a,b)=>(b.dueAt||0)-(a.dueAt||0));
@@ -558,7 +601,7 @@
     function planHtml(p,index){
       const done=dayDone(activeChild,index,false);
       const note=index<6?"（计划建立前，不计进度）":isTravelDay(index)?"（秋假出游，不计进度）":"";
-      return`<details ${index===dayIndex?"open":""}><summary><span>第${index+1}天 · ${p.date} ${p.weekday}${note}</span><b>${done}/${p[activeChild].length}</b></summary><ol>${p[activeChild].map(t=>`<li>${esc(t.title)}${t.required===false?"（可选）":""}：${esc(t.detail)}</li>`).join("")}</ol></details>`;
+      return`<details ${index===dayIndex?"open":""}><summary><span>第${index+1}天 · ${p.date} ${p.weekday}${note}</span><b>${done}/${p[activeChild].length}</b></summary><ol>${p[activeChild].map(t=>`<li>${esc(t.title)}${t.progressBonus?"（选做，计入进度）":t.required===false?"（可选）":""}：${esc(t.detail)}</li>`).join("")}</ol></details>`;
     }
     function findSpend(id){return(state.spends[activeChild]||[]).find(i=>String(i.id)===String(id))}
     function findAward(id){return(state.awards[activeChild]||[]).find(i=>String(i.id)===String(id))}
@@ -576,7 +619,7 @@
             date:plan.iso,weekday:plan.weekday,excludedFromMonthlyProgress:excludedFromProgress(index),
             tasks:plan[child].map(task=>{
               const key=keyOf(child,index,task.id),updatedAt=state.checkedUpdatedAt[key];
-              return{id:task.id,title:task.title,required:task.required!==false,completed:!!state.checked[key],completedAt:updatedAt?new Date(updatedAt).toISOString():null};
+              return{id:task.id,title:task.title,required:task.required!==false,progressBonus:!!task.progressBonus,completed:!!state.checked[key],completedAt:updatedAt?new Date(updatedAt).toISOString():null};
             })
           })),
           spending:JSON.parse(JSON.stringify(state.spends[child]||[])),
